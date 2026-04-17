@@ -1,0 +1,33 @@
+# Build directories
+target/
+build/
+dist/
+
+# IDE
+.idea/
+.vscode/
+*.iml
+*.class
+*.jar
+*.log
+*.ctxt
+
+# OS
+.DS_Store
+.AppleDouble
+.LSOverride
+Thumbs.db
+
+# Project specific
+oracleJdk-26.jdk/
+attendance-backend/target/
+*.jar
+*.war
+
+# Maven
+.m2/
+dependency-reduced-pom.xml
+
+# Environment
+.env
+.env.local
