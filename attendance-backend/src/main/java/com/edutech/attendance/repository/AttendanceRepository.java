@@ -13,7 +13,11 @@ import java.util.Optional;
 public interface AttendanceRepository extends JpaRepository<Attendance, Long> {
     List<Attendance> findByUserId(Long userId);
     List<Attendance> findByUserIdAndDateBetween(Long userId, LocalDate startDate, LocalDate endDate);
-    
+
     @Query("SELECT a FROM Attendance a WHERE a.user.id = :userId AND a.date = :date")
     Optional<Attendance> findByUserIdAndDate(@Param("userId") Long userId, @Param("date") LocalDate date);
+
+    long countByDate(LocalDate date);
+    long countByStatus(Attendance.Status status);
+    long countByDateAndStatus(LocalDate date, Attendance.Status status);
 }

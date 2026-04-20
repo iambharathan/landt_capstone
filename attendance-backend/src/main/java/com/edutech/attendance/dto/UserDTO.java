@@ -14,4 +14,5 @@ public class UserDTO {
     private String fullName;
     private String role;
     private Boolean isActive;
+    private String password; // used only on create; never returned in responses
 }

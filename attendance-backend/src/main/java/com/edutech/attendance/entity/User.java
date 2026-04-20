@@ -11,29 +11,34 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 @AllArgsConstructor
 public class User {
-    
+
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
-    
+
     @Column(unique = true, nullable = false)
     private String username;
-    
+
     @Column(nullable = false)
     private String password;
-    
+
     @Column(unique = true, nullable = false)
     private String email;
-    
+
     @Column(nullable = false)
     private String fullName;
-    
+
     @Enumerated(EnumType.STRING)
     @Column(nullable = false)
     private Role role;
-    
+
     @Column(nullable = false)
     private Boolean isActive = true;
+
+    /** Optional: the manager who oversees this employee */
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "manager_id")
+    private User manager;
 
     public enum Role {
         ADMIN, MANAGER, EMPLOYEE

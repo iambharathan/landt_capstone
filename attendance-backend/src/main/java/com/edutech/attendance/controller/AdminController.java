@@ -5,13 +5,15 @@ import com.edutech.attendance.dto.UserDTO;
 import com.edutech.attendance.entity.Policy;
 import com.edutech.attendance.entity.User;
 import com.edutech.attendance.service.PolicyService;
-import com.edutech.attendance.service.UserService;
 import com.edutech.attendance.service.ReportService;
+import com.edutech.attendance.service.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
+
 import java.util.List;
+import java.util.Map;
 
 @RestController
 @RequestMapping("/api/admin")
@@ -28,9 +30,28 @@ public class AdminController {
     @Autowired
     private ReportService reportService;
 
+    // --- User Management ---
+
     @PostMapping("/users")
     public ResponseEntity<User> createUser(@RequestBody UserDTO userDTO) {
         return ResponseEntity.ok(userService.createUser(userDTO));
+    }
+
+    // Fix #5: list all users
+    @GetMapping("/users")
+    public ResponseEntity<List<UserDTO>> getAllUsers() {
+        return ResponseEntity.ok(userService.getAllUsers());
+    }
+
+    // Fix #5: get user by ID
+    @GetMapping("/users/{id}")
+    public ResponseEntity<UserDTO> getUserById(@PathVariable Long id) {
+        return ResponseEntity.ok(userService.getUserById(id));
+    }
+
+    @GetMapping("/users/role/{role}")
+    public ResponseEntity<List<UserDTO>> getUsersByRole(@PathVariable String role) {
+        return ResponseEntity.ok(userService.getUsersByRole(role));
     }
 
     @PutMapping("/users/{id}")
@@ -44,10 +65,7 @@ public class AdminController {
         return ResponseEntity.ok("User deleted successfully");
     }
 
-    @GetMapping("/users/{role}")
-    public ResponseEntity<List<UserDTO>> getUsersByRole(@PathVariable String role) {
-        return ResponseEntity.ok(userService.getUsersByRole(role));
-    }
+    // --- Policy Management ---
 
     @PostMapping("/policies")
     public ResponseEntity<Policy> createPolicy(@RequestBody PolicyDTO policyDTO) {
@@ -55,7 +73,8 @@ public class AdminController {
     }
 
     @PutMapping("/policies/{id}")
-    public ResponseEntity<Policy> updatePolicy(@PathVariable Long id, @RequestBody PolicyDTO policyDTO) {
+    public ResponseEntity<Policy> updatePolicy(@PathVariable Long id,
+                                                @RequestBody PolicyDTO policyDTO) {
         return ResponseEntity.ok(policyService.updatePolicy(id, policyDTO));
     }
 
@@ -64,20 +83,24 @@ public class AdminController {
         return ResponseEntity.ok(policyService.getAllPolicies());
     }
 
+    // --- Reports (Fix #2: real aggregation) ---
+
     @GetMapping("/reports/comprehensive")
-    public ResponseEntity<String> getComprehensiveReport() {
+    public ResponseEntity<Map<String, Object>> getComprehensiveReport() {
         return ResponseEntity.ok(reportService.getComprehensiveReport());
     }
 
     @GetMapping("/reports/attendance")
-    public ResponseEntity<String> getAttendanceReport() {
+    public ResponseEntity<Map<String, Object>> getAttendanceReport() {
         return ResponseEntity.ok(reportService.getAttendanceSummary());
     }
 
     @GetMapping("/reports/leave")
-    public ResponseEntity<String> getLeaveReport() {
+    public ResponseEntity<Map<String, Object>> getLeaveReport() {
         return ResponseEntity.ok(reportService.getLeaveSummary());
     }
+
+    // --- Health ---
 
     @GetMapping("/health")
     public ResponseEntity<String> health() {
