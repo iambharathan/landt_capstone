@@ -60,10 +60,9 @@ public class AttendanceService {
     }
 
     public AttendanceDTO getTodayAttendance(Long userId) {
-        Attendance attendance = attendanceRepository.findByUserIdAndDate(userId, LocalDate.now())
-                .orElseThrow(() -> new ResourceNotFoundException(
-                        "No attendance record for user " + userId + " today."));
-        return toDTO(attendance);
+        return attendanceRepository.findByUserIdAndDate(userId, LocalDate.now())
+                .map(this::toDTO)
+                .orElse(null);
     }
 
     // Fix #1b: attendance history for an employee

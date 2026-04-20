@@ -1,0 +1,199 @@
+<div class="app-layout">
+
+    <!-- Sleek Sidebar -->
+    <aside class="app-sidebar">
+        <div class="mb-5 text-center">
+            <h3 class="fw-bold mb-0 text-white"><i class="fa-solid fa-layer-group text-info me-2"></i> StaffSync</h3>
+            <small class="text-white-50 letter-spacing-1">ENTERPRISE ADMIN</small>
+        </div>
+
+        <div class="sidebar-user mt-3 mb-5">
+            <div class="user-avatar"><i class="fa-solid fa-shield-halved text-warning"></i></div>
+            <div class="user-info text-center mt-3">
+                <h6 class="mb-1 text-white">{{ authService.getCurrentUser()?.fullName || 'System Administrator' }}</h6>
+                <span class="badge bg-warning text-dark px-3 py-1 rounded-pill mt-2">ADMIN</span>
+            </div>
+        </div>
+
+        <div class="mt-auto">
+            <button class="btn btn-sidebar-logout w-100 py-2 d-flex align-items-center justify-content-center gap-2"
+                (click)="logout()">
+                <i class="fa-solid fa-arrow-right-from-bracket"></i> Save & Logout
+            </button>
+        </div>
+    </aside>
+
+    <!-- Main Content Space -->
+    <main class="app-content">
+
+        <div class="d-flex justify-content-between align-items-center mb-4">
+            <h2 class="fw-bold text-dark m-0">Admin Dashboard</h2>
+            <p class="text-muted m-0">Manage global personnel & metrics.</p>
+        </div>
+
+        <!-- Quick Toast Notification -->
+        <div *ngIf="message"
+            class="alert alert-dark bg-dark text-white fw-bold shadow-lg position-fixed top-0 start-50 translate-middle-x mt-4 px-4 py-3"
+            style="z-index: 1050; border-radius: 12px;">
+            <i class="fa-solid fa-circle-info me-2 text-warning fs-5 align-middle"></i> {{ message }}
+        </div>
+
+        <!-- Stats Row -->
+        <div class="row g-4 mb-5" *ngIf="report">
+            <div class="col-md-3">
+                <div class="card premium-card border-0 h-100 px-2 py-1">
+                    <div class="card-body">
+                        <h2 class="card-title display-5 fw-bold mb-0 text-primary">{{ report.totalUsers }}</h2>
+                        <p class="card-text fw-bold text-muted small text-uppercase">Total Users</p>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-3">
+                <div class="card premium-card border-0 h-100 px-2 py-1">
+                    <div class="card-body">
+                        <h2 class="card-title display-5 fw-bold mb-0 text-success">{{ report.attendance.presentTotal }}
+                        </h2>
+                        <p class="card-text fw-bold text-muted small text-uppercase">Present Today</p>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-3">
+                <div class="card premium-card border-0 h-100 px-2 py-1">
+                    <div class="card-body">
+                        <h2 class="card-title display-5 fw-bold mb-0 text-danger">{{ report.attendance.absentTotal }}
+                        </h2>
+                        <p class="card-text fw-bold text-muted small text-uppercase">Absent</p>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-3">
+                <div class="card premium-card border-0 h-100 px-2 py-1">
+                    <div class="card-body">
+                        <h2 class="card-title display-5 fw-bold mb-0 text-warning">{{ report.leaves.pending }}</h2>
+                        <p class="card-text fw-bold text-muted small text-uppercase">Leaves Pending</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="row g-4">
+            <!-- Users List -->
+            <div class="col-xl-8">
+                <div class="card premium-card border-0 h-100">
+                    <div class="card-header bg-transparent border-bottom px-4 py-3 fw-bold text-dark">
+                        <i class="fa-solid fa-users-gear me-2 text-primary"></i> Employee Directory
+                    </div>
+                    <div class="card-body p-0">
+                        <div class="table-responsive">
+                            <table class="table table-hover mb-0">
+                                <thead class="bg-light">
+                                    <tr>
+                                        <th class="ps-4">Employee</th>
+                                        <th>Role</th>
+                                        <th>Line Manager</th>
+                                        <th>Status</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    <tr *ngFor="let u of users">
+                                        <td class="ps-4">
+                                            <strong>{{ u.fullName }}</strong><br>
+                                            <small class="text-muted"><i class="fa-regular fa-envelope me-1"></i>{{
+                                                u.email }}</small>
+                                        </td>
+                                        <td>
+                                            <span class="badge"
+                                                [ngClass]="{'bg-primary': u.role==='EMPLOYEE', 'bg-info': u.role==='MANAGER', 'bg-dark': u.role==='ADMIN'}">{{
+                                                u.role }}</span>
+                                        </td>
+                                        <td>
+                                            <ng-container *ngIf="u.role === 'EMPLOYEE'">
+                                                <select class="form-select form-select-sm border-0 bg-light fw-bold"
+                                                    style="min-width: 140px;" [(ngModel)]="u.managerId"
+                                                    (change)="updateManager(u)">
+                                                    <option [ngValue]="null">Not Assigned</option>
+                                                    <option *ngFor="let m of managers" [ngValue]="m.id">{{ m.fullName }}
+                                                    </option>
+                                                </select>
+                                            </ng-container>
+                                            <span *ngIf="u.role !== 'EMPLOYEE'" class="text-muted small fw-bold"><i
+                                                    class="fa-solid fa-minus opactiy-50"></i></span>
+                                        </td>
+                                        <td>
+                                            <div class="d-flex align-items-center gap-2">
+                                                <i class="fa-solid fa-circle text-success" style="font-size: 0.5rem;"
+                                                    *ngIf="u.isActive"></i>
+                                                <i class="fa-solid fa-circle text-danger" style="font-size: 0.5rem;"
+                                                    *ngIf="!u.isActive"></i>
+                                                <span class="small fw-bold">{{ u.isActive ? 'Active' : 'Inactive'
+                                                    }}</span>
+                                            </div>
+                                        </td>
+                                    </tr>
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Create User Form -->
+            <div class="col-xl-4">
+                <div class="card premium-card border-0 h-100">
+                    <div class="card-header bg-transparent border-bottom px-4 py-3 fw-bold text-dark">
+                        <i class="fa-solid fa-user-plus me-2 text-primary"></i> Rapid Regstration
+                    </div>
+                    <div class="card-body p-4">
+                        <form (ngSubmit)="createUser()">
+                            <div class="mb-3">
+                                <label class="form-label small fw-bold text-muted text-uppercase mb-1">Full Name</label>
+                                <input type="text" class="form-control" name="name" [(ngModel)]="newUser.fullName"
+                                    required>
+                            </div>
+                            <div class="mb-3">
+                                <label class="form-label small fw-bold text-muted text-uppercase mb-1">Username</label>
+                                <input type="text" class="form-control" name="username" [(ngModel)]="newUser.username"
+                                    required>
+                            </div>
+                            <div class="mb-3">
+                                <label class="form-label small fw-bold text-muted text-uppercase mb-1">Email</label>
+                                <input type="email" class="form-control" name="email" [(ngModel)]="newUser.email"
+                                    required>
+                            </div>
+                            <div class="mb-3">
+                                <label class="form-label small fw-bold text-muted text-uppercase mb-1">Password</label>
+                                <input type="password" class="form-control" name="pass" [(ngModel)]="newUser.password"
+                                    required>
+                            </div>
+                            <div class="row">
+                                <div class="col-6 mb-4">
+                                    <label class="form-label small fw-bold text-muted text-uppercase mb-1">Role</label>
+                                    <select class="form-select form-select-sm py-2" name="role"
+                                        [(ngModel)]="newUser.role">
+                                        <option value="EMPLOYEE">Employee</option>
+                                        <option value="MANAGER">Manager</option>
+                                        <option value="ADMIN">Admin</option>
+                                    </select>
+                                </div>
+                                <div class="col-6 mb-4" *ngIf="newUser.role === 'EMPLOYEE'">
+                                    <label
+                                        class="form-label small fw-bold text-muted text-uppercase mb-1">Manager</label>
+                                    <select class="form-select form-select-sm py-2" name="managerId"
+                                        [(ngModel)]="newUser.managerId">
+                                        <option [ngValue]="null">Random</option>
+                                        <option *ngFor="let m of managers" [ngValue]="m.id">{{ m.fullName }}</option>
+                                    </select>
+                                </div>
+                            </div>
+                            <button type="submit"
+                                class="btn btn-primary w-100 py-2 d-flex align-items-center justify-content-center gap-2">
+                                <i class="fa-solid fa-plus"></i> Create Account
+                            </button>
+                        </form>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+    </main>
+</div>

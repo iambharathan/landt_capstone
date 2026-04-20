@@ -4,6 +4,8 @@ import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
+import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.annotation.JsonProperty;
 import java.time.LocalDate;
 
 @Entity
@@ -17,9 +19,16 @@ public class LeaveRequest {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
     
+    @JsonIgnore
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "user_id", nullable = false)
     private User user;
+
+    @Transient
+    @JsonProperty("userId")
+    public Long fetchUserId() {
+        return user != null ? user.getId() : null;
+    }
     
     @Column(nullable = false)
     private LocalDate startDate;
@@ -37,9 +46,16 @@ public class LeaveRequest {
     @Column(columnDefinition = "TEXT")
     private String reason;
     
+    @JsonIgnore
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "approved_by")
     private User approvedBy;
+
+    @Transient
+    @JsonProperty("approvedById")
+    public Long fetchApprovedById() {
+        return approvedBy != null ? approvedBy.getId() : null;
+    }
     
     @Column(columnDefinition = "TEXT")
     private String rejectionReason;

@@ -1,0 +1,118 @@
+<div class="auth-wrapper">
+    <div class="auth-card">
+
+        <!-- Context Area -->
+        <div class="auth-brand">
+            <div style="z-index: 10; position: relative;">
+                <h1 class="display-4 fw-bold mb-4">
+                    <i class="fa-solid fa-layer-group text-info me-3"></i>StaffSync
+                </h1>
+                <p class="fs-5 opacity-75 mb-5 lh-lg">
+                    Join thousands of enterprises processing their HR, Payroll, and Team structural requests instantly.
+                </p>
+
+                <div class="mt-5">
+                    <p class="fw-bold text-white mb-2">Already registered?</p>
+                    <button routerLink="/login" class="btn btn-outline-light rounded-pill px-4 fw-bold shadow-sm">Go to
+                        Login</button>
+                </div>
+            </div>
+        </div>
+
+        <!-- Register Form Area -->
+        <div class="auth-form py-4">
+            <div class="mb-4">
+                <h2 class="fw-bold text-dark">Create Account</h2>
+                <p class="text-muted">Fill out the form below to register your profile.</p>
+            </div>
+
+            <div *ngIf="message" class="alert shadow-sm rounded-3 border-0 py-2 d-flex align-items-center text-white"
+                [ngClass]="success ? 'alert-success' : 'alert-danger'">
+                <i class="fa-solid me-3 fs-4" [ngClass]="success ? 'fa-circle-check' : 'fa-triangle-exclamation'"></i>
+                <span class="fw-bold">{{ message }}</span>
+            </div>
+
+            <form #regForm="ngForm" (ngSubmit)="onRegister()">
+
+                <div class="mb-3">
+                    <label class="form-label fw-bold text-muted small text-uppercase tracking-wide">Full Name</label>
+                    <div class="input-group auth-input-group shadow-sm"
+                        [ngClass]="{'border border-danger rounded-3': fullName.invalid && fullName.touched}">
+                        <span class="input-group-text"><i class="fa-regular fa-user"></i></span>
+                        <input type="text" class="form-control" name="fullName" [(ngModel)]="user.fullName"
+                            placeholder="John Doe" required minlength="3" #fullName="ngModel">
+                    </div>
+                    <div *ngIf="fullName.invalid && fullName.touched" class="text-danger small mt-1 fw-bold">
+                        <i class="fa-solid fa-circle-exclamation me-1"></i> Full legal name is required (min 3 chars).
+                    </div>
+                </div>
+
+                <div class="mb-3">
+                    <label class="form-label fw-bold text-muted small text-uppercase tracking-wide">Username</label>
+                    <div class="input-group auth-input-group shadow-sm"
+                        [ngClass]="{'border border-danger rounded-3': username.invalid && username.touched}">
+                        <span class="input-group-text"><i class="fa-solid fa-at"></i></span>
+                        <input type="text" class="form-control" name="username" [(ngModel)]="user.username"
+                            placeholder="johndoe" required minlength="4" pattern="^[a-zA-Z0-9_]+$" #username="ngModel">
+                    </div>
+                    <div *ngIf="username.invalid && username.touched" class="text-danger small mt-1 fw-bold">
+                        <i class="fa-solid fa-circle-exclamation me-1"></i> Valid username required (no spaces, min 4
+                        chars).
+                    </div>
+                </div>
+
+                <div class="mb-3">
+                    <label class="form-label fw-bold text-muted small text-uppercase tracking-wide">Email Address <span
+                            class="text-info">*Unique</span></label>
+                    <div class="input-group auth-input-group shadow-sm"
+                        [ngClass]="{'border border-danger rounded-3': email.invalid && email.touched}">
+                        <span class="input-group-text"><i class="fa-regular fa-envelope"></i></span>
+                        <input type="email" class="form-control" name="email" [(ngModel)]="user.email"
+                            placeholder="name@company.com" required email #email="ngModel">
+                    </div>
+                    <div *ngIf="email.invalid && email.touched" class="text-danger small mt-1 fw-bold">
+                        <i class="fa-solid fa-circle-exclamation me-1"></i> A uniquely valid enterprise email is
+                        required.
+                    </div>
+                </div>
+
+                <div class="mb-3">
+                    <label class="form-label fw-bold text-muted small text-uppercase tracking-wide">Account Role</label>
+                    <div class="input-group auth-input-group shadow-sm"
+                        [ngClass]="{'border border-danger rounded-3': role.invalid && role.touched}">
+                        <span class="input-group-text"><i class="fa-solid fa-user-shield"></i></span>
+                        <select class="form-select" name="role" [(ngModel)]="user.role" required #role="ngModel">
+                            <option value="EMPLOYEE">Employee</option>
+                            <option value="MANAGER">Manager</option>
+                            <option value="ADMIN">System Administrator</option>
+                        </select>
+                    </div>
+                    <div *ngIf="role.invalid && role.touched" class="text-danger small mt-1 fw-bold">
+                        <i class="fa-solid fa-circle-exclamation me-1"></i> You must select an authorization role.
+                    </div>
+                </div>
+
+                <div class="mb-4">
+                    <label class="form-label fw-bold text-muted small text-uppercase tracking-wide">Secure
+                        Password</label>
+                    <div class="input-group auth-input-group shadow-sm"
+                        [ngClass]="{'border border-danger rounded-3': password.invalid && password.touched}">
+                        <span class="input-group-text"><i class="fa-solid fa-lock"></i></span>
+                        <input type="password" class="form-control" name="password" [(ngModel)]="user.password"
+                            placeholder="••••••••••••" required minlength="6" #password="ngModel">
+                    </div>
+                    <div *ngIf="password.invalid && password.touched" class="text-danger small mt-1 fw-bold">
+                        <i class="fa-solid fa-circle-exclamation me-1"></i> Secure password is required (min 6 chars).
+                    </div>
+                </div>
+
+                <button type="submit" class="btn btn-auth mt-2 mb-3 shadow-sm position-relative overflow-hidden"
+                    [disabled]="regForm.invalid || loading">
+                    <span *ngIf="loading" class="spinner-border spinner-border-sm me-2"></span>
+                    <span *ngIf="!loading">Launch Enterprise Profile</span>
+                </button>
+            </form>
+        </div>
+
+    </div>
+</div>

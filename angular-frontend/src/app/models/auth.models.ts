@@ -28,4 +28,5 @@ export interface User {
   fullName: string;
   role: string;
   isActive: boolean;
+  managerId?: number;
 }

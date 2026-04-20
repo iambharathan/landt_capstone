@@ -1,0 +1,243 @@
+<div class="app-layout">
+
+    <!-- Sleek Sidebar -->
+    <aside class="app-sidebar">
+        <div class="mb-5 text-center">
+            <h3 class="fw-bold mb-0 text-white"><i class="fa-solid fa-layer-group text-info me-2"></i> StaffSync</h3>
+            <small class="text-white-50 letter-spacing-1">EMPLOYEE PORTAL</small>
+        </div>
+
+        <div class="sidebar-user mt-3 mb-5">
+            <div class="user-avatar"><i class="fa-regular fa-circle-user text-white"></i></div>
+            <div class="user-info text-center mt-3">
+                <h6 class="mb-1 text-white">{{ authService.getCurrentUser()?.fullName || 'Employee' }}</h6>
+                <span class="badge bg-primary px-3 py-1 rounded-pill mt-2">EMPLOYEE</span>
+            </div>
+        </div>
+
+        <div class="mt-auto">
+            <button class="btn btn-sidebar-logout w-100 py-2 d-flex align-items-center justify-content-center gap-2"
+                (click)="logout()">
+                <i class="fa-solid fa-arrow-right-from-bracket"></i> Logout
+            </button>
+        </div>
+    </aside>
+
+    <!-- Main Content Space -->
+    <main class="app-content">
+
+        <div class="d-flex justify-content-between align-items-center mb-4">
+            <h2 class="fw-bold text-dark m-0">Employee Hub</h2>
+            <p class="text-muted m-0">Track your attendance & leaves.</p>
+        </div>
+
+        <!-- Quick Toast Notification -->
+        <div *ngIf="message"
+            class="alert alert-dark bg-dark text-white fw-bold shadow-lg position-fixed top-0 start-50 translate-middle-x mt-4 px-4 py-3"
+            style="z-index: 1050; border-radius: 12px;">
+            <i class="fa-solid fa-circle-info me-2 text-warning fs-5 align-middle"></i> {{ message }}
+        </div>
+
+        <!-- Statistics Row -->
+        <div class="row g-4 mb-4">
+            <div class="col-md-4">
+                <div class="card premium-card border-0 h-100 text-white"
+                    style="background: linear-gradient(135deg, #0ea5e9 0%, #3b82f6 100%);">
+                    <div class="card-body">
+                        <h2 class="card-title display-5 fw-bold mb-0">{{ totalLeavesTaken }}</h2>
+                        <p class="card-text fw-bold opacity-75 small text-uppercase">Leaves Taken Overall</p>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-4">
+                <div class="card premium-card border-0 h-100 bg-warning text-dark">
+                    <div class="card-body">
+                        <h2 class="card-title display-5 fw-bold mb-0">{{ pendingLeavesCount }}</h2>
+                        <p class="card-text fw-bold opacity-75 small text-uppercase">Pending Approval</p>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-4">
+                <div class="card premium-card border-0 h-100 text-white"
+                    style="background: linear-gradient(135deg, #10b981 0%, #059669 100%);">
+                    <div class="card-body">
+                        <h2 class="card-title display-5 fw-bold mb-0">{{ approvedLeavesCount }}</h2>
+                        <p class="card-text fw-bold opacity-75 small text-uppercase">Leaves Approved</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="row g-4">
+            <!-- Left Column -->
+            <div class="col-xl-5">
+                <!-- Attendance Card -->
+                <div class="card premium-card mb-4 border-0">
+                    <div class="card-body text-center p-4">
+                        <h4 class="card-title fw-bold text-dark mb-2">Today's Attendance</h4>
+                        <p class="text-muted mb-4">{{ todayAttendance ? 'You are actively checked in today.' : 'You have
+                            not checked in yet.' }}</p>
+
+                        <div *ngIf="todayAttendance" class="mb-4">
+                            <h5><span class="badge bg-success p-2 px-3 rounded-pill text-uppercase shadow-sm">Status: {{
+                                    todayAttendance.status }}</span></h5>
+                            <div class="mt-3 text-start bg-light p-3 rounded-4 border">
+                                <p class="mb-2"><i class="fa-solid fa-arrow-right-to-bracket text-success me-2"></i>
+                                    <strong>Time In:</strong> {{ ('1970-01-01T' + todayAttendance.checkInTime) |
+                                    date:'shortTime' }}
+                                </p>
+                                <p class="mb-0"><i class="fa-solid fa-arrow-right-from-bracket text-danger me-2"></i>
+                                    <strong>Time Out:</strong> {{ todayAttendance.checkOutTime ? (('1970-01-01T' +
+                                    todayAttendance.checkOutTime) | date:'shortTime') : '--:--' }}
+                                </p>
+                            </div>
+                        </div>
+
+                        <div class="d-flex gap-2 justify-content-center mt-4">
+                            <button class="btn btn-lg btn-success px-4" (click)="checkIn()"
+                                [disabled]="attendanceLoading || (todayAttendance !== null)">
+                                <span *ngIf="attendanceLoading" class="spinner-border spinner-border-sm me-1"></span>
+                                <i *ngIf="!attendanceLoading" class="fa-solid fa-fingerprint me-2"></i> Initial Check-in
+                            </button>
+                            <button class="btn btn-lg btn-danger text-white px-4" (click)="checkOut()"
+                                [disabled]="attendanceLoading || !todayAttendance || todayAttendance.checkOutTime !== null">
+                                <span *ngIf="attendanceLoading" class="spinner-border spinner-border-sm me-1"></span>
+                                <i *ngIf="!attendanceLoading" class="fa-solid fa-person-walking-arrow-right me-2"></i>
+                                End Shift
+                            </button>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Leave Form -->
+                <div class="card premium-card border-0">
+                    <div class="card-header bg-transparent border-bottom px-4 py-3 fw-bold text-dark">
+                        <i class="fa-regular fa-calendar-plus me-2 text-primary"></i> Apply for Leave Request
+                    </div>
+                    <div class="card-body p-4">
+                        <form (ngSubmit)="applyLeave()">
+                            <div class="row">
+                                <div class="col-6 mb-3">
+                                    <label class="form-label small text-muted text-uppercase fw-bold">Start Date</label>
+                                    <input type="date" class="form-control" name="startDate"
+                                        [(ngModel)]="leaveRequest.startDate" required>
+                                </div>
+                                <div class="col-6 mb-3">
+                                    <label class="form-label small text-muted text-uppercase fw-bold">End Date</label>
+                                    <input type="date" class="form-control" name="endDate"
+                                        [(ngModel)]="leaveRequest.endDate" required>
+                                </div>
+                            </div>
+                            <div class="mb-3">
+                                <label class="form-label small text-muted text-uppercase fw-bold">Leave Type</label>
+                                <select class="form-select py-2" name="leaveType" [(ngModel)]="leaveRequest.leaveType">
+                                    <option value="SICK">Sick Leave</option>
+                                    <option value="CASUAL">Casual Leave</option>
+                                    <option value="ANNUAL">Annual Leave</option>
+                                </select>
+                            </div>
+                            <div class="mb-4">
+                                <label class="form-label small text-muted text-uppercase fw-bold">Reason</label>
+                                <textarea class="form-control" name="reason" [(ngModel)]="leaveRequest.reason" rows="2"
+                                    required></textarea>
+                            </div>
+                            <button type="submit" class="btn btn-primary w-100 py-2" [disabled]="leaveLoading">
+                                <span *ngIf="leaveLoading" class="spinner-border spinner-border-sm me-1"></span>
+                                <i *ngIf="!leaveLoading" class="fa-regular fa-paper-plane me-1"></i> Submit Leave
+                                Request
+                            </button>
+                        </form>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Right Column -->
+            <div class="col-xl-7">
+                <!-- Leave Requests Tree -->
+                <div class="card premium-card border-0 mb-4">
+                    <div class="card-header bg-transparent border-bottom px-4 py-3 fw-bold text-dark">
+                        <i class="fa-solid fa-clock-rotate-left me-2 text-primary"></i> My Leave Applications
+                    </div>
+                    <div class="card-body p-0">
+                        <div class="table-responsive">
+                            <table class="table table-hover mb-0">
+                                <thead class="bg-light">
+                                    <tr>
+                                        <th class="ps-4">Dates</th>
+                                        <th>Type</th>
+                                        <th>Reason</th>
+                                        <th>Status</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    <tr *ngFor="let l of myLeaves">
+                                        <td class="ps-4"><small class="fw-bold">{{ l.startDate | date:'MMM d' }} - {{
+                                                l.endDate | date:'MMM d' }}</small></td>
+                                        <td><span class="badge bg-secondary">{{ l.leaveType }}</span></td>
+                                        <td class="text-muted">{{ l.reason }}</td>
+                                        <td>
+                                            <span class="badge px-3"
+                                                [ngClass]="{'bg-warning text-dark': l.status === 'PENDING', 'bg-success': l.status === 'APPROVED', 'bg-danger': l.status === 'REJECTED'}">{{
+                                                l.status }}</span>
+                                            <div *ngIf="l.rejectionReason" class="text-danger small mt-1 fw-bold"><i
+                                                    class="fa-solid fa-circle-exclamation me-1"></i>{{ l.rejectionReason
+                                                }}</div>
+                                        </td>
+                                    </tr>
+                                    <tr *ngIf="myLeaves.length === 0">
+                                        <td colspan="4" class="text-center text-muted py-4"><i
+                                                class="fa-regular fa-folder-open mb-2 fs-3 opacity-50"></i><br>No leave
+                                            history found.</td>
+                                    </tr>
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Attendance History -->
+                <div class="card premium-card border-0">
+                    <div class="card-header bg-transparent border-bottom px-4 py-3 fw-bold text-dark">
+                        <i class="fa-solid fa-list-check me-2 text-primary"></i> Recent Attendance Log
+                    </div>
+                    <div class="card-body p-0">
+                        <div class="table-responsive" style="max-height: 250px; overflow-y: auto;">
+                            <table class="table table-hover mb-0">
+                                <thead class="bg-light" style="position: sticky; top: 0; z-index: 1;">
+                                    <tr>
+                                        <th class="ps-4">Date</th>
+                                        <th>Check-In</th>
+                                        <th>Check-Out</th>
+                                        <th>Status</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    <tr *ngFor="let a of attendanceHistory">
+                                        <td class="ps-4"><strong class="text-dark">{{ a.date | date:'MMM d, y'
+                                                }}</strong></td>
+                                        <td><span class="text-success"><i
+                                                    class="fa-solid fa-arrow-right-to-bracket text-success"
+                                                    style="font-size: 0.6rem;"></i> {{ ('1970-01-01T' + a.checkInTime) |
+                                                date:'shortTime' }}</span></td>
+                                        <td><span [ngClass]="a.checkOutTime ? 'text-danger' : 'text-muted'"><i
+                                                    class="fa-solid fa-arrow-right-from-bracket text-danger"
+                                                    style="font-size: 0.6rem;" *ngIf="a.checkOutTime"></i> {{
+                                                a.checkOutTime ? (('1970-01-01T' + a.checkOutTime) | date:'shortTime') :
+                                                'Ongoing...' }}</span></td>
+                                        <td><span class="badge bg-light text-dark border">{{ a.status }}</span></td>
+                                    </tr>
+                                    <tr *ngIf="attendanceHistory.length === 0">
+                                        <td colspan="4" class="text-center text-muted py-4"><i
+                                                class="fa-solid fa-timeline mb-2 fs-3 opacity-50"></i><br>No attendance
+                                            logs yet.</td>
+                                    </tr>
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+    </main>
+</div>

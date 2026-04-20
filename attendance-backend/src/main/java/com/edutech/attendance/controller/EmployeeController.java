@@ -15,9 +15,9 @@ import org.springframework.web.bind.annotation.*;
 import java.util.List;
 
 @RestController
-@RequestMapping("/api/employee")
+@RequestMapping("/employee")
 @CrossOrigin(origins = "*")
-@PreAuthorize("hasRole('EMPLOYEE')")
+@PreAuthorize("hasAnyRole('EMPLOYEE', 'MANAGER')")
 public class EmployeeController {
 
     @Autowired
@@ -44,7 +44,11 @@ public class EmployeeController {
     @GetMapping("/attendance/today")
     public ResponseEntity<AttendanceDTO> getTodayAttendance() {
         Long userId = securityContextUtil.getCurrentUserId();
-        return ResponseEntity.ok(attendanceService.getTodayAttendance(userId));
+        AttendanceDTO dto = attendanceService.getTodayAttendance(userId);
+        if (dto == null) {
+            return ResponseEntity.noContent().build();
+        }
+        return ResponseEntity.ok(dto);
     }
 
     @GetMapping("/attendance")

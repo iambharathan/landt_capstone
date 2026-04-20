@@ -42,11 +42,11 @@ public class AuthService {
 
     public User register(RegisterRequest request) {
         if (userRepository.existsByEmail(request.getEmail())) {
-            throw new ResourceNotFoundException("Email already registered");
+            throw new IllegalArgumentException("Email already registered");
         }
 
         if (userRepository.existsByUsername(request.getUsername())) {
-            throw new ResourceNotFoundException("Username already taken");
+            throw new IllegalArgumentException("Username already taken");
         }
 
         User user = new User();

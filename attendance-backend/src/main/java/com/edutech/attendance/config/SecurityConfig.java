@@ -53,7 +53,7 @@ public class SecurityConfig {
                     .requestMatchers("/h2-console/**").permitAll()
                     .requestMatchers("/admin/**").hasRole("ADMIN")
                     .requestMatchers("/manager/**").hasRole("MANAGER")
-                    .requestMatchers("/employee/**").hasRole("EMPLOYEE")
+                    .requestMatchers("/employee/**").hasAnyRole("EMPLOYEE", "MANAGER")
                     .anyRequest().authenticated()
             )
             .addFilterBefore(jwtAuthenticationFilter, UsernamePasswordAuthenticationFilter.class);

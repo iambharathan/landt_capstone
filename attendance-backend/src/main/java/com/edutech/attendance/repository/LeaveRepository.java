@@ -29,4 +29,6 @@ public interface LeaveRepository extends JpaRepository<LeaveRequest, Long> {
     List<LeaveRequest> findPendingLeavesByManager(@Param("managerId") Long managerId);
 
     long countByStatus(LeaveRequest.Status status);
+    long countByUserIdAndStatus(Long userId, LeaveRequest.Status status);
+    long countByUserId(Long userId);
 }

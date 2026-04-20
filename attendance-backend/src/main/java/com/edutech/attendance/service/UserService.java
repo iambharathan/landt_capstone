@@ -33,6 +33,10 @@ public class UserService {
         user.setPassword(passwordEncoder.encode(
                 userDTO.getPassword() != null ? userDTO.getPassword() : "changeme"));
 
+        if (userDTO.getManagerId() != null) {
+            userRepository.findById(userDTO.getManagerId()).ifPresent(user::setManager);
+        }
+
         User saved = userRepository.save(user);
         log.info("User created: {}", userDTO.getEmail());
         return saved;
@@ -43,6 +47,12 @@ public class UserService {
                 .orElseThrow(() -> new ResourceNotFoundException("User not found: " + userId));
         user.setFullName(userDTO.getFullName());
         user.setIsActive(userDTO.getIsActive());
+
+        if (userDTO.getManagerId() != null) {
+            userRepository.findById(userDTO.getManagerId()).ifPresent(user::setManager);
+        } else {
+            user.setManager(null);
+        }
 
         User updated = userRepository.save(user);
         log.info("User updated: {}", userId);
@@ -59,7 +69,8 @@ public class UserService {
         User.Role userRole = User.Role.valueOf(role.toUpperCase());
         return userRepository.findByRole(userRole).stream()
                 .map(u -> new UserDTO(u.getId(), u.getUsername(), u.getEmail(),
-                        u.getFullName(), u.getRole().toString(), u.getIsActive(), null))
+                        u.getFullName(), u.getRole().toString(), u.getIsActive(), null,
+                        u.getManager() != null ? u.getManager().getId() : null))
                 .collect(Collectors.toList());
     }
 
@@ -67,7 +78,8 @@ public class UserService {
     public List<UserDTO> getAllUsers() {
         return userRepository.findAll().stream()
                 .map(u -> new UserDTO(u.getId(), u.getUsername(), u.getEmail(),
-                        u.getFullName(), u.getRole().toString(), u.getIsActive(), null))
+                        u.getFullName(), u.getRole().toString(), u.getIsActive(), null,
+                        u.getManager() != null ? u.getManager().getId() : null))
                 .collect(Collectors.toList());
     }
 
@@ -76,6 +88,7 @@ public class UserService {
         User u = userRepository.findById(userId)
                 .orElseThrow(() -> new ResourceNotFoundException("User not found: " + userId));
         return new UserDTO(u.getId(), u.getUsername(), u.getEmail(),
-                u.getFullName(), u.getRole().toString(), u.getIsActive(), null);
+                u.getFullName(), u.getRole().toString(), u.getIsActive(), null,
+                u.getManager() != null ? u.getManager().getId() : null);
     }
 }

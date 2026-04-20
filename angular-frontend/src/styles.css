@@ -1,1 +1,294 @@
-/* You can add global styles to this file, and also import other style files */
+/* Import premium Google Font */
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap');
+
+/* Global Styles */
+body {
+    font-family: 'Inter', sans-serif !important;
+    background: #f4f7fe;
+    min-height: 100vh;
+    color: #1e293b;
+}
+
+/* Premium Card Glassmorphism Effect */
+.premium-card {
+    background: rgba(255, 255, 255, 0.95);
+    backdrop-filter: blur(10px);
+    border: 1px solid rgba(255, 255, 255, 0.5);
+    border-radius: 16px;
+    box-shadow: 0 10px 40px rgba(15, 23, 42, 0.05);
+    transition: transform 0.2s ease, box-shadow 0.2s ease;
+}
+
+.premium-card:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 15px 45px rgba(15, 23, 42, 0.1);
+}
+
+/* Buttons Styling */
+.btn {
+    border-radius: 8px;
+    font-weight: 600;
+    transition: all 0.2s ease;
+    padding: 0.5rem 1.25rem;
+}
+
+.btn-primary {
+    background: linear-gradient(135deg, #4f46e5 0%, #3b82f6 100%);
+    border: none;
+    color: white;
+}
+
+.btn-primary:hover {
+    background: linear-gradient(135deg, #4338ca 0%, #2563eb 100%);
+    box-shadow: 0 4px 15px rgba(59, 130, 246, 0.4);
+    transform: translateY(-1px);
+}
+
+.btn-success {
+    background: linear-gradient(135deg, #10b981 0%, #059669 100%);
+    border: none;
+}
+
+.btn-success:hover {
+    box-shadow: 0 4px 15px rgba(16, 185, 129, 0.4);
+    transform: translateY(-1px);
+}
+
+.btn-warning {
+    background: linear-gradient(135deg, #f59e0b 0%, #d97706 100%);
+    color: white !important;
+    border: none;
+}
+
+.btn-warning:hover {
+    box-shadow: 0 4px 15px rgba(245, 158, 11, 0.4);
+    transform: translateY(-1px);
+    color: white !important;
+}
+
+/* Badges */
+.badge {
+    padding: 0.5em 0.8em;
+    border-radius: 6px;
+    font-weight: 600;
+}
+
+/* Tables */
+.table {
+    border-collapse: separate;
+    border-spacing: 0;
+}
+
+.table th {
+    border-bottom: 2px solid #e2e8f0;
+    font-weight: 600;
+    color: #475569;
+    text-transform: uppercase;
+    font-size: 0.85rem;
+    letter-spacing: 0.5px;
+}
+
+.table td {
+    vertical-align: middle;
+    border-bottom: 1px solid #f1f5f9;
+}
+
+/* Alerts and Toasts */
+.alert-dark {
+    background: rgba(15, 23, 42, 0.95);
+    backdrop-filter: blur(8px);
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    color: white;
+}
+
+/* AUTHENTICATION LAYOUT */
+.auth-wrapper {
+    min-height: 100vh;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 2rem;
+    background: linear-gradient(135deg, #f6f8fd 0%, #e9edf5 100%);
+}
+
+.auth-card {
+    display: flex;
+    background: white;
+    border-radius: 24px;
+    box-shadow: 0 20px 60px rgba(15, 23, 42, 0.08);
+    overflow: hidden;
+    max-width: 1050px;
+    width: 100%;
+}
+
+.auth-brand {
+    flex: 1;
+    background: linear-gradient(135deg, #1e1e2f 0%, #2a2a40 100%);
+    color: white;
+    padding: 5rem 4rem;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    position: relative;
+    overflow: hidden;
+}
+
+.auth-brand::before {
+    content: '';
+    position: absolute;
+    width: 400px;
+    height: 400px;
+    background: linear-gradient(135deg, #38bdf8 0%, #3b82f6 100%);
+    border-radius: 50%;
+    filter: blur(100px);
+    opacity: 0.4;
+    top: -150px;
+    right: -150px;
+    z-index: 0;
+}
+
+.auth-form {
+    flex: 1;
+    padding: 5rem 4rem;
+    background: #ffffff;
+}
+
+.auth-input-group .input-group-text {
+    background: #f8fafc;
+    border: 1px solid #e2e8f0;
+    border-right: none;
+    border-top-left-radius: 12px;
+    border-bottom-left-radius: 12px;
+    color: #94a3b8;
+}
+
+.auth-input-group .form-control {
+    background: #f8fafc;
+    border: 1px solid #e2e8f0;
+    border-left: none;
+    border-top-right-radius: 12px;
+    border-bottom-right-radius: 12px;
+    padding: 0.8rem 1rem 0.8rem 0;
+}
+
+.auth-input-group .form-control:focus {
+    background: #ffffff;
+    border-color: #3b82f6;
+    box-shadow: none;
+}
+
+.auth-input-group:focus-within .input-group-text,
+.auth-input-group:focus-within .form-control {
+    background: #ffffff;
+    border-color: #3b82f6;
+}
+
+.btn-auth {
+    border-radius: 12px;
+    padding: 0.9rem;
+    font-weight: 600;
+    background: linear-gradient(135deg, #4f46e5 0%, #3b82f6 100%);
+    border: none;
+    color: white;
+    width: 100%;
+}
+
+.btn-auth:hover {
+    background: linear-gradient(135deg, #4338ca 0%, #2563eb 100%);
+    box-shadow: 0 8px 25px rgba(59, 130, 246, 0.4);
+    transform: translateY(-2px);
+    color: white;
+}
+
+/* APP DASHBOARD SIDEBAR LAYOUT */
+.app-layout {
+    display: flex;
+    min-height: 100vh;
+    background: #f4f7fe;
+}
+
+.app-sidebar {
+    width: 290px;
+    min-width: 290px;
+    background: linear-gradient(180deg, #1e1e2f 0%, #2a2a40 100%);
+    color: white;
+    padding: 2.5rem 1.5rem;
+    display: flex;
+    flex-direction: column;
+    position: sticky;
+    top: 0;
+    height: 100vh;
+    overflow: hidden;
+    box-shadow: 4px 0 20px rgba(0, 0, 0, 0.1);
+}
+
+.app-sidebar::before {
+    content: '';
+    position: absolute;
+    width: 300px;
+    height: 300px;
+    background: radial-gradient(circle, rgba(56, 189, 248, 0.25) 0%, rgba(56, 189, 248, 0) 70%);
+    top: -100px;
+    left: -100px;
+    z-index: 0;
+    filter: blur(40px);
+}
+
+.app-sidebar>* {
+    position: relative;
+    z-index: 1;
+}
+
+.sidebar-user {
+    background: rgba(255, 255, 255, 0.06);
+    padding: 1.5rem;
+    border-radius: 16px;
+    border: 1px solid rgba(255, 255, 255, 0.08);
+    text-align: center;
+    backdrop-filter: blur(10px);
+}
+
+.user-avatar i {
+    font-size: 3.5rem;
+    color: #38bdf8;
+    margin-bottom: 0.5rem;
+}
+
+.app-content {
+    flex: 1;
+    padding: 2.5rem;
+    overflow-y: auto;
+    max-width: calc(100vw - 290px);
+}
+
+.btn-sidebar-logout {
+    background: rgba(255, 255, 255, 0.1);
+    color: white;
+    border: 1px solid rgba(255, 255, 255, 0.2);
+    transition: all 0.2s;
+}
+
+.btn-sidebar-logout:hover {
+    background: #ef4444;
+    border-color: #ef4444;
+    box-shadow: 0 4px 15px rgba(239, 68, 68, 0.4);
+}
+
+/* Scrollbar sleekness */
+::-webkit-scrollbar {
+    width: 6px;
+    height: 6px;
+}
+
+::-webkit-scrollbar-track {
+    background: transparent;
+}
+
+::-webkit-scrollbar-thumb {
+    background: #cbd5e1;
+    border-radius: 10px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+    background: #94a3b8;
+}

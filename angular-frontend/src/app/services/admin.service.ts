@@ -22,6 +22,10 @@ export class AdminService {
         return this.http.post<User>(`${this.API}/users`, user);
     }
 
+    updateUser(id: number, user: any): Observable<User> {
+        return this.http.put<User>(`${this.API}/users/${id}`, user);
+    }
+
     deleteUser(id: number): Observable<any> {
         return this.http.delete(`${this.API}/users/${id}`);
     }

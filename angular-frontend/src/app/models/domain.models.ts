@@ -9,6 +9,8 @@ export interface AttendanceRecord {
 
 export interface LeaveRequest {
     id: number;
+    userId?: number;
+    user?: any;
     startDate: string;
     endDate: string;
     leaveType: string;
