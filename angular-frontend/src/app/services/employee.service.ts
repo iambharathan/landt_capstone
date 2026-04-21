@@ -3,9 +3,11 @@ import { HttpClient } from '@angular/common/http';
 import { Observable } from 'rxjs';
 import { AttendanceRecord, LeaveRequest, ApplyLeaveRequest } from '../models/domain.models';
 
+import { environment } from '../../environments/environment';
+
 @Injectable({ providedIn: 'root' })
 export class EmployeeService {
-    private readonly API = 'http://localhost:8080/api/employee';
+    private readonly API = environment.apiUrl + '/employee';
 
     constructor(private http: HttpClient) { }
 

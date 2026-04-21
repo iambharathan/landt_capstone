@@ -1,4 +1,5 @@
 import { Component, OnInit } from '@angular/core';
+import { environment } from '../../../../environments/environment';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { HttpClient, HttpHeaders } from '@angular/common/http';
@@ -12,7 +13,7 @@ import { AttendanceRecord, LeaveRequest } from '../../../models/domain.models';
   templateUrl: './employee.component.html'
 })
 export class EmployeeComponent implements OnInit {
-  private API = 'http://localhost:8080/api/employee';
+  private API = environment.apiUrl + '/employee';
 
   message = '';
   activeTab: 'dashboard' | 'leaves' | 'calendar' | 'profile' = 'dashboard';

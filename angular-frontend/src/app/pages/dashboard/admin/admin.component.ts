@@ -1,4 +1,5 @@
 import { Component, OnInit } from '@angular/core';
+import { environment } from '../../../../environments/environment';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { HttpClient, HttpHeaders } from '@angular/common/http';
@@ -14,7 +15,7 @@ import { ComprehensiveReport, AttendanceRecord, LeaveRequest } from '../../../mo
   templateUrl: './admin.component.html'
 })
 export class AdminComponent implements OnInit {
-  private readonly API = 'http://localhost:8080/api/admin';
+  private readonly API = environment.apiUrl + '/admin';
 
   users: User[] = [];
   managers: User[] = [];

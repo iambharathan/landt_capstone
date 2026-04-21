@@ -4,9 +4,11 @@ import { Observable } from 'rxjs';
 import { User } from '../models/auth.models';
 import { Policy, ComprehensiveReport, AttendanceReport, LeaveReport } from '../models/domain.models';
 
+import { environment } from '../../environments/environment';
+
 @Injectable({ providedIn: 'root' })
 export class AdminService {
-    private readonly API = 'http://localhost:8080/api/admin';
+    private readonly API = environment.apiUrl + '/admin';
 
     constructor(private http: HttpClient) { }
 

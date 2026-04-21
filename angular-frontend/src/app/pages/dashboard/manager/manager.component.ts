@@ -1,4 +1,5 @@
 import { Component, OnInit } from '@angular/core';
+import { environment } from '../../../../environments/environment';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { HttpClient, HttpHeaders } from '@angular/common/http';
@@ -12,7 +13,7 @@ import { LeaveRequest, AttendanceRecord } from '../../../models/domain.models';
   templateUrl: './manager.component.html'
 })
 export class ManagerComponent implements OnInit {
-  private BASE = 'http://localhost:8080/api';
+  private BASE = environment.apiUrl;
 
   message = '';
   activeTab: 'team' | 'leaves' | 'checkin' = 'team';
