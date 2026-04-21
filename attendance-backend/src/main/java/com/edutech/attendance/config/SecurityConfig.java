@@ -6,7 +6,7 @@ import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.config.annotation.authentication.configuration.AuthenticationConfiguration;
-import org.springframework.security.config.annotation.method.configuration.EnableGlobalMethodSecurity;
+import org.springframework.security.config.annotation.method.configuration.EnableMethodSecurity;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.config.http.SessionCreationPolicy;
@@ -22,7 +22,7 @@ import java.util.Arrays;
 
 @Configuration
 @EnableWebSecurity
-@EnableGlobalMethodSecurity(prePostEnabled = true)
+@EnableMethodSecurity
 public class SecurityConfig {
 
     @Autowired
@@ -41,44 +41,54 @@ public class SecurityConfig {
     @Bean
     public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
         http
-            .cors()
+                .cors() // ✅ enables CORS with our config below
                 .and()
-            .csrf()
-                .disable()
-            .sessionManagement()
-                .sessionCreationPolicy(SessionCreationPolicy.STATELESS)
+                .csrf().disable()
+                .sessionManagement()
+                    .sessionCreationPolicy(SessionCreationPolicy.STATELESS)
                 .and()
-            .authorizeHttpRequests(authz -> authz
-                    .requestMatchers("/auth/**").permitAll()
-                    .requestMatchers("/actuator/health").permitAll()
-                    .requestMatchers("/h2-console/**").permitAll()
-                    .requestMatchers("/admin/**").hasRole("ADMIN")
-                    .requestMatchers("/manager/**").hasRole("MANAGER")
-                    .requestMatchers("/employee/**").hasAnyRole("EMPLOYEE", "MANAGER")
-                    .anyRequest().authenticated()
-            )
-            .addFilterBefore(jwtAuthenticationFilter, UsernamePasswordAuthenticationFilter.class);
+                .authorizeHttpRequests(authz -> authz
+                        .requestMatchers("/auth/**").permitAll()
+                        .requestMatchers("/actuator/health").permitAll()
+                        .requestMatchers("/h2-console/**").permitAll()
+                        .requestMatchers("/admin/**").hasRole("ADMIN")
+                        .requestMatchers("/manager/**").hasRole("MANAGER")
+                        .requestMatchers("/employee/**").hasAnyRole("EMPLOYEE", "MANAGER")
+                        .anyRequest().authenticated()
+                )
+                .addFilterBefore(jwtAuthenticationFilter, UsernamePasswordAuthenticationFilter.class);
+
+        // Required for H2 console (safe to keep)
+        http.headers().frameOptions().disable();
 
         return http.build();
     }
 
     @Bean
     public CorsConfigurationSource corsConfigurationSource() {
+
         CorsConfiguration configuration = new CorsConfiguration();
-        configuration.setAllowedOrigins(Arrays.asList(
-            "http://localhost:4200", 
-            "http://localhost:3000",
-            "https://landtcapstone-production.up.railway.app",
-            "https://landt-capstone-g77vg7w5o-bharathans-projects-30f45a85.vercel.app",
-            "https://landt-capstone.vercel.app"
+
+        // 🔥 FUTURE-PROOF CORS (wildcards)
+        configuration.setAllowedOriginPatterns(Arrays.asList(
+                "http://localhost:*",
+                "https://*.vercel.app",
+                "https://*.run.place"
         ));
-        configuration.setAllowedMethods(Arrays.asList("GET", "POST", "PUT", "DELETE", "PATCH", "OPTIONS"));
+
+        configuration.setAllowedMethods(Arrays.asList(
+                "GET", "POST", "PUT", "DELETE", "PATCH", "OPTIONS"
+        ));
+
         configuration.setAllowedHeaders(Arrays.asList("*"));
+
         configuration.setAllowCredentials(true);
+
         configuration.setMaxAge(3600L);
 
         UrlBasedCorsConfigurationSource source = new UrlBasedCorsConfigurationSource();
         source.registerCorsConfiguration("/**", configuration);
+
         return source;
     }
 }
