@@ -3,9 +3,9 @@ spring:
     name: attendance-management
   
   datasource:
-    url: jdbc:mysql://database-1.c9w4uoqc4q95.ap-south-1.rds.amazonaws.com:3306/attendance_db?createDatabaseIfNotExist=true&useSSL=false&serverTimezone=UTC&allowPublicKeyRetrieval=true
-    username: admin
-    password: bharathan
+    url: ${DB_URL:jdbc:mysql://database-1.c9w4uoqc4q95.ap-south-1.rds.amazonaws.com:3306/attendance_db?createDatabaseIfNotExist=true&useSSL=false&serverTimezone=UTC&allowPublicKeyRetrieval=true}
+    username: ${DB_USERNAME:admin}
+    password: ${DB_PASSWORD:bharathan}
     driver-class-name: com.mysql.cj.jdbc.Driver
   
   jpa:
@@ -34,3 +34,9 @@ logging:
   level:
     root: INFO
     com.edutech.attendance: DEBUG
+
+management:
+  endpoints:
+    web:
+      exposure:
+        include: health

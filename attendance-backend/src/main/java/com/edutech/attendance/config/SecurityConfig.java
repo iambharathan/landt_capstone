@@ -50,6 +50,7 @@ public class SecurityConfig {
                 .and()
             .authorizeHttpRequests(authz -> authz
                     .requestMatchers("/auth/**").permitAll()
+                    .requestMatchers("/actuator/health").permitAll()
                     .requestMatchers("/h2-console/**").permitAll()
                     .requestMatchers("/admin/**").hasRole("ADMIN")
                     .requestMatchers("/manager/**").hasRole("MANAGER")
