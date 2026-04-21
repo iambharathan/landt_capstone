@@ -3,16 +3,19 @@ import { HttpClient } from '@angular/common/http';
 import { Router } from '@angular/router';
 import { Observable, tap } from 'rxjs';
 import { LoginRequest, LoginResponse, RegisterRequest } from '../models/auth.models';
-
 import { environment } from '../../environments/environment';
 
 @Injectable({ providedIn: 'root' })
 export class AuthService {
+
     private readonly API = environment.apiUrl + '/auth';
+
     private readonly TOKEN_KEY = 'auth_token';
     private readonly USER_KEY = 'auth_user';
 
-    constructor(private http: HttpClient, private router: Router) { }
+    constructor(private http: HttpClient, private router: Router) {
+        console.log('API BASE:', this.API); // 🔥 DEBUG LINE
+    }
 
     login(req: LoginRequest): Observable<LoginResponse> {
         return this.http.post<LoginResponse>(`${this.API}/login`, req).pipe(
