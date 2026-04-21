@@ -1,142 +1,394 @@
-<div class="app-layout">
+<div class="flex min-h-screen bg-gray-50 font-sans text-gray-800 antialiased">
 
-    <!-- Sleek Sidebar -->
-    <aside class="app-sidebar">
-        <div class="mb-5 text-center">
-            <h3 class="fw-bold mb-0 text-white"><i class="fa-solid fa-layer-group text-info me-2"></i> StaffSync</h3>
-            <small class="text-white-50 letter-spacing-1">MANAGER PORTAL</small>
+    <!-- Sidebar -->
+    <aside class="w-64 flex-shrink-0 bg-gray-900 text-white flex flex-col h-screen sticky top-0 shadow-lg">
+        <div class="p-6 border-b border-gray-800">
+            <h3 class="text-xl font-bold flex items-center mb-1 tracking-tight">
+                <svg class="w-6 h-6 text-indigo-500 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                        d="M19 11H5m14 0a2 2 0 012 2v6a2 2 0 01-2 2H5a2 2 0 01-2-2v-6a2 2 0 012-2m14 0V9a2 2 0 00-2-2M5 11V9a2 2 0 002-2m0 0V5a2 2 0 012-2h6a2 2 0 012 2v2M7 7h10">
+                    </path>
+                </svg>
+                StaffSync
+            </h3>
+            <p class="text-xs text-gray-400 font-medium tracking-wide">MANAGER PORTAL</p>
         </div>
 
-        <div class="sidebar-user mt-3 mb-5">
-            <div class="user-avatar"><i class="fa-solid fa-user-tie text-info"></i></div>
-            <div class="user-info text-center mt-3">
-                <h6 class="mb-1 text-white">{{ authService.getCurrentUser()?.fullName || 'Manager' }}</h6>
-                <span class="badge bg-info text-white px-3 py-1 rounded-pill mt-2">MANAGER</span>
+        <nav class="flex-1 overflow-y-auto py-6 flex flex-col gap-1">
+            <button
+                class="flex items-center px-6 py-3 text-sm font-semibold transition-colors hover:bg-gray-800 w-full text-left"
+                [ngClass]="activeTab === 'team' ? 'bg-indigo-500/10 border-l-2 border-indigo-500 text-indigo-400' : 'text-gray-400 border-l-2 border-transparent'"
+                (click)="activeTab='team'; closeMember()">
+                <svg class="w-5 h-5 mr-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                        d="M12 4.354a4 4 0 110 5.292M15 21H3v-1a6 6 0 0112 0v1zm0 0h6v-1a6 6 0 00-9-5.197M13 7a4 4 0 11-8 0 4 4 0 018 0z">
+                    </path>
+                </svg>
+                My Team Dashboard
+            </button>
+
+            <button
+                class="flex items-center px-6 py-3 text-sm font-semibold transition-colors hover:bg-gray-800 w-full text-left"
+                [ngClass]="activeTab === 'leaves' ? 'bg-indigo-500/10 border-l-2 border-indigo-500 text-indigo-400' : 'text-gray-400 border-l-2 border-transparent'"
+                (click)="activeTab='leaves'">
+                <svg class="w-5 h-5 mr-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                        d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z">
+                    </path>
+                </svg>
+                Pending Leaves
+            </button>
+
+            <button
+                class="flex items-center px-6 py-3 text-sm font-semibold transition-colors hover:bg-gray-800 w-full text-left"
+                [ngClass]="activeTab === 'checkin' ? 'bg-indigo-500/10 border-l-2 border-indigo-500 text-indigo-400' : 'text-gray-400 border-l-2 border-transparent'"
+                (click)="activeTab='checkin'">
+                <svg class="w-5 h-5 mr-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                        d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"></path>
+                </svg>
+                My Attendance
+            </button>
+        </nav>
+
+        <div class="p-6 border-t border-gray-800">
+            <div class="mb-4 flex items-center gap-3">
+                <div class="w-10 h-10 rounded-full bg-gray-700 flex items-center justify-center">
+                    <svg class="w-5 h-5 text-gray-300" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                            d="M21 13.255A23.931 23.931 0 0112 15c-3.183 0-6.22-.62-9-1.745M16 6V4a2 2 0 00-2-2h-4a2 2 0 00-2 2v2m4 6h.01M5 20h14a2 2 0 002-2V8a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z">
+                        </path>
+                    </svg>
+                </div>
+                <div>
+                    <p class="text-sm font-bold text-white">{{ authService.getCurrentUser()?.fullName || 'Manager' }}
+                    </p>
+                    <p class="text-xs font-semibold tracking-wide text-purple-400 uppercase">Manager</p>
+                </div>
             </div>
-        </div>
-
-        <div class="mt-auto">
-            <button class="btn btn-sidebar-logout w-100 py-2 d-flex align-items-center justify-content-center gap-2"
+            <button
+                class="w-full flex items-center justify-center gap-2 py-2.5 rounded-lg text-sm text-gray-300 hover:text-white bg-gray-800/50 hover:bg-gray-700 transition"
                 (click)="logout()">
-                <i class="fa-solid fa-arrow-right-from-bracket"></i> Save & Logout
+                <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                        d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h4a3 3 0 013 3v1">
+                    </path>
+                </svg>
+                Logout
             </button>
         </div>
     </aside>
 
-    <!-- Main Content Space -->
-    <main class="app-content">
+    <!-- Main Content -->
+    <main class="flex-1 max-w-7xl mx-auto p-8 overflow-y-auto">
 
-        <div class="d-flex justify-content-between align-items-center mb-4">
-            <h2 class="fw-bold text-dark m-0">Manager Workstation</h2>
-            <p class="text-muted m-0">Coordinate your team and approve leaves.</p>
-        </div>
-
-        <!-- Quick Toast Notification -->
-        <div *ngIf="message"
-            class="alert alert-dark bg-dark text-white fw-bold shadow-lg position-fixed top-0 start-50 translate-middle-x mt-4 px-4 py-3"
-            style="z-index: 1050; border-radius: 12px;">
-            <i class="fa-solid fa-circle-info me-2 text-warning fs-5 align-middle"></i> {{ message }}
-        </div>
-
-        <!-- Top Statistics Row -->
-        <div class="row g-4 mb-4">
-            <!-- Leaves Due -->
-            <div class="col-md-4">
-                <div class="card bg-warning border-0 premium-card h-100">
-                    <div class="card-body">
-                        <h2 class="card-title display-4 fw-bold mb-0 text-dark">{{ totalPendingRequests }}</h2>
-                        <p class="card-text text-dark fw-bold opacity-75">Team Leaves Awaiting Review</p>
-                    </div>
-                </div>
+        <!-- Global Alert -->
+        <div *ngIf="message" class="toast toast-top toast-center z-50">
+            <div class="alert bg-gray-900 text-white shadow-lg text-sm rounded-lg mb-4 font-medium">
+                <span>{{ message }}</span>
             </div>
+        </div>
 
-            <!-- My Shift Status -->
-            <div class="col-md-8">
+        <!-- PENDING LEAVES TAB -->
+        <ng-container *ngIf="activeTab === 'leaves'">
+            <div class="flex justify-between items-end mb-8">
+                <div>
+                    <h1 class="text-3xl font-extrabold text-gray-900 tracking-tight">Team Leave Requests</h1>
+                    <p class="text-sm text-gray-500 mt-1 font-medium">Manage time off for your direct reports</p>
+                </div>
                 <div
-                    class="card premium-card border-0 h-100 p-3 text-center d-flex justify-content-center align-items-center">
-                    <div>
-                        <h4 class="fw-bold mb-3 text-dark">My Today's Shift</h4>
-                        <p class="mb-3 text-muted">Status: <span class="badge px-3 py-2"
-                                [ngClass]="todayAttendance ? 'bg-success' : 'bg-secondary'">{{ todayAttendance ?
-                                'Checked In Active' : 'Not Checked In' }}</span></p>
-                        <div class="d-flex gap-2 justify-content-center">
-                            <button class="btn btn-success px-4" (click)="checkIn()"
-                                [disabled]="attendanceLoading || todayAttendance !== null">
-                                <span *ngIf="attendanceLoading" class="spinner-border spinner-border-sm me-1"></span>
-                                <i *ngIf="!attendanceLoading" class="fa-solid fa-fingerprint me-2"></i> Register Check
-                                In
-                            </button>
-                            <button class="btn btn-danger text-white px-4" (click)="checkOut()"
-                                [disabled]="attendanceLoading || !todayAttendance || todayAttendance.checkOutTime !== null">
-                                <span *ngIf="attendanceLoading" class="spinner-border spinner-border-sm me-1"></span>
-                                <i *ngIf="!attendanceLoading" class="fa-solid fa-person-walking-arrow-right me-2"></i>
-                                Complete Check Out
-                            </button>
-                        </div>
-                    </div>
+                    class="bg-yellow-50 text-yellow-700 px-4 py-2 rounded-lg border border-yellow-200 flex items-center text-sm font-bold shadow-sm">
+                    <svg class="w-5 h-5 mr-2 text-yellow-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                            d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"></path>
+                    </svg>
+                    {{ totalPendingRequests }} Pending
                 </div>
             </div>
-        </div>
 
-        <!-- Pending Team Leaves -->
-        <div class="card premium-card border-0">
-            <div class="card-header bg-transparent border-bottom fw-bold text-dark px-4 py-3">
-                <i class="fa-solid fa-users me-2 text-primary"></i> Team Pending Leaves
-            </div>
-            <div class="card-body p-0">
-                <div class="table-responsive">
-                    <table class="table table-hover align-middle mb-0">
-                        <thead class="bg-light">
+            <div class="bg-white rounded-xl shadow-sm border border-gray-200 overflow-hidden">
+                <div class="overflow-x-auto">
+                    <table class="w-full text-left border-collapse">
+                        <thead class="bg-gray-50 border-b border-gray-200">
                             <tr>
-                                <th class="ps-4">Employee ID</th>
-                                <th>Leave Dates</th>
-                                <th>Type</th>
-                                <th>Reason</th>
-                                <th class="text-end pe-4">Actions</th>
+                                <th class="px-6 py-4 font-bold text-xs tracking-wider uppercase text-gray-500">Employee
+                                </th>
+                                <th class="px-6 py-4 font-bold text-xs tracking-wider uppercase text-gray-500">Dates
+                                </th>
+                                <th class="px-6 py-4 font-bold text-xs tracking-wider uppercase text-gray-500">Type</th>
+                                <th class="px-6 py-4 font-bold text-xs tracking-wider uppercase text-gray-500 w-1/3">
+                                    Reason</th>
+                                <th
+                                    class="px-6 py-4 font-bold text-xs tracking-wider uppercase text-gray-500 text-right">
+                                    Actions</th>
                             </tr>
                         </thead>
-                        <tbody>
-                            <tr *ngFor="let l of pendingLeaves">
-                                <td class="ps-4"><strong>User #{{ l.userId || l.id }}</strong></td>
-                                <td>{{ l.startDate | date:'MMM d' }} - {{ l.endDate | date:'MMM d' }}</td>
-                                <td><span class="badge bg-secondary">{{ l.leaveType }}</span></td>
-                                <td class="text-muted">{{ l.reason }}</td>
-                                <td class="text-end pe-4">
-                                    <div *ngIf="selectedLeaveId !== l.id" class="btn-group shadow-sm">
-                                        <button class="btn btn-sm btn-success px-3" (click)="approve(l.id)"
-                                            [disabled]="loading">
-                                            <span *ngIf="loading" class="spinner-border spinner-border-sm me-1"></span>
-                                            <i *ngIf="!loading" class="fa-solid fa-check me-1"></i> Approve
+                        <tbody class="text-sm divide-y divide-gray-100">
+                            <tr *ngFor="let l of pendingLeaves" class="hover:bg-indigo-50/30 transition-colors">
+                                <td class="px-6 py-4 font-bold text-gray-900">User #{{ l.userId || l.id }}</td>
+                                <td class="px-6 py-4 font-medium text-gray-600">{{ l.startDate | date:'MMM d' }} – {{
+                                    l.endDate | date:'MMM d' }}</td>
+                                <td class="px-6 py-4">
+                                    <span
+                                        class="px-3 py-1 rounded bg-gray-100 text-gray-700 text-xs font-bold tracking-wide">{{
+                                        l.leaveType }}</span>
+                                </td>
+                                <td class="px-6 py-4 text-gray-600 max-w-xs truncate" [title]="l.reason">{{ l.reason }}
+                                </td>
+                                <td class="px-6 py-4 text-right">
+                                    <div *ngIf="selectedLeaveId !== l.id" class="flex justify-end gap-3">
+                                        <button
+                                            class="px-4 py-1.5 rounded-lg border border-green-200 text-green-700 bg-green-50 hover:bg-green-100 font-bold text-xs shadow-sm transition-colors flex items-center"
+                                            (click)="approve(l.id)" [disabled]="loading">
+                                            <svg class="w-3.5 h-3.5 mr-1.5 border-none" fill="none"
+                                                stroke="currentColor" stroke-width="3" viewBox="0 0 24 24">
+                                                <path stroke-linecap="round" stroke-linejoin="round" d="M5 13l4 4L19 7">
+                                                </path>
+                                            </svg>
+                                            Approve
                                         </button>
-                                        <button class="btn btn-sm btn-outline-danger px-3 bg-white"
+                                        <button
+                                            class="px-4 py-1.5 rounded-lg border border-red-200 text-red-700 bg-red-50 hover:bg-red-100 font-bold text-xs shadow-sm transition-colors flex items-center"
                                             (click)="startReject(l.id)" [disabled]="loading">
-                                            <i class="fa-solid fa-xmark me-1"></i> Reject
+                                            <svg class="w-3.5 h-3.5 mr-1.5 border-none" fill="none"
+                                                stroke="currentColor" stroke-width="3" viewBox="0 0 24 24">
+                                                <path stroke-linecap="round" stroke-linejoin="round"
+                                                    d="M6 18L18 6M6 6l12 12"></path>
+                                            </svg>
+                                            Reject
                                         </button>
                                     </div>
-                                    <div *ngIf="selectedLeaveId === l.id" class="d-flex gap-2 justify-content-end">
-                                        <input type="text" class="form-control form-control-sm w-auto shadow-sm"
-                                            placeholder="Reason for rejection..." [(ngModel)]="rejectionReason">
-                                        <button class="btn btn-sm btn-danger shadow-sm" (click)="confirmReject()"
-                                            [disabled]="loading">
-                                            <span *ngIf="loading" class="spinner-border spinner-border-sm me-1"></span>
-                                            Confirm
-                                        </button>
-                                        <button class="btn btn-sm btn-secondary shadow-sm" (click)="cancelReject()"
-                                            [disabled]="loading">Cancel</button>
+                                    <div *ngIf="selectedLeaveId === l.id" class="flex justify-end gap-2 items-center">
+                                        <input type="text"
+                                            class="w-full max-w-[200px] px-3 py-1.5 border border-red-200 rounded-lg text-sm focus:outline-none focus:ring-1 focus:ring-red-500 shadow-sm"
+                                            placeholder="Rejection reason..." [(ngModel)]="rejectionReason">
+                                        <button
+                                            class="px-3 py-1.5 bg-red-600 text-white rounded-lg text-xs font-bold hover:bg-red-700 transition"
+                                            (click)="confirmReject()" [disabled]="loading">Confirm</button>
+                                        <button
+                                            class="px-3 py-1.5 bg-gray-100 text-gray-600 border border-gray-300 rounded-lg text-xs font-bold hover:bg-gray-200 transition"
+                                            (click)="cancelReject()">Cancel</button>
                                     </div>
                                 </td>
                             </tr>
                             <tr *ngIf="pendingLeaves.length === 0">
-                                <td colspan="5" class="text-center text-muted py-5">
-                                    <i
-                                        class="fa-solid fa-clipboard-check fs-1 mb-3 d-block text-success opacity-50"></i>
-                                    All caught up! No pending leave requests.
+                                <td colspan="5" class="px-6 py-16 text-center text-gray-400">
+                                    <svg class="w-12 h-12 mx-auto mb-3 opacity-20 text-gray-500" fill="none"
+                                        stroke="currentColor" viewBox="0 0 24 24">
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                            d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"></path>
+                                    </svg>
+                                    <p class="font-medium">All caught up! No pending leave requests.</p>
                                 </td>
                             </tr>
                         </tbody>
                     </table>
                 </div>
             </div>
-        </div>
+        </ng-container>
+
+        <!-- TEAM VIEW TAB -->
+        <ng-container *ngIf="activeTab === 'team' && !selectedMember">
+            <div class="mb-8">
+                <h1 class="text-3xl font-extrabold text-gray-900 tracking-tight">Team Overview</h1>
+                <p class="text-sm text-gray-500 mt-1 font-medium">Direct reports and their attendance statistics</p>
+            </div>
+
+            <!-- Manager Statistics Grid -->
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-6 mb-8">
+                <div
+                    class="bg-white rounded-xl shadow-sm border border-gray-200 p-6 flex justify-between items-center relative overflow-hidden">
+                    <div class="absolute w-1.5 h-full bg-indigo-500 left-0 top-0"></div>
+                    <div class="pl-2">
+                        <p class="text-xs font-bold text-gray-500 uppercase tracking-widest mb-1.5">Total Direct Reports
+                        </p>
+                        <h2 class="text-4xl font-extrabold text-gray-900 tracking-tight">{{ team.length }}</h2>
+                    </div>
+                    <div class="p-3 bg-indigo-50 rounded-xl text-indigo-500">
+                        <svg class="w-7 h-7" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0zm6 3a2 2 0 11-4 0 2 2 0 014 0zM7 10a2 2 0 11-4 0 2 2 0 014 0z">
+                            </path>
+                        </svg>
+                    </div>
+                </div>
+
+                <div class="bg-white rounded-xl shadow-sm border border-gray-200 p-6 flex justify-between items-center relative overflow-hidden cursor-pointer"
+                    (click)="activeTab='leaves'">
+                    <div class="absolute w-1.5 h-full bg-yellow-400 left-0 top-0"></div>
+                    <div class="pl-2">
+                        <p class="text-xs font-bold text-gray-500 uppercase tracking-widest mb-1.5">Actionable Leaves
+                        </p>
+                        <h2 class="text-4xl font-extrabold text-gray-900 tracking-tight">{{ totalPendingRequests }}</h2>
+                    </div>
+                    <div class="p-3 bg-yellow-50 rounded-xl text-yellow-500">
+                        <svg class="w-7 h-7" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"></path>
+                        </svg>
+                    </div>
+                </div>
+            </div>
+
+            <div *ngIf="team.length === 0"
+                class="py-16 text-center text-gray-400 font-medium bg-white rounded-xl shadow-sm border border-gray-200">
+                No team members assigned yet.
+            </div>
+
+            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+                <!-- Team Cards -->
+                <div class="bg-white rounded-xl shadow-sm hover:shadow-md transition-shadow border border-gray-200 p-6 flex flex-col cursor-pointer group hover:border-indigo-200"
+                    *ngFor="let m of team" (click)="viewMember(m)">
+                    <div class="flex items-center gap-4 mb-5">
+                        <div
+                            class="w-14 h-14 rounded-full bg-indigo-50 border border-indigo-100 flex items-center justify-center text-indigo-500">
+                            <svg class="w-7 h-7" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                    d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z"></path>
+                            </svg>
+                        </div>
+                        <div>
+                            <h5
+                                class="font-extrabold text-gray-900 text-lg tracking-tight group-hover:text-indigo-600 transition-colors">
+                                {{ m.fullName }}</h5>
+                            <p class="text-xs font-medium text-gray-500">{{ m.email }}</p>
+                        </div>
+                    </div>
+                    <div>
+                        <span
+                            class="px-3 py-1 rounded-full text-xs font-bold tracking-widest bg-blue-50 text-blue-700 border border-blue-200 shadow-sm">EMPLOYEE</span>
+                    </div>
+                    <div class="mt-6 pt-4 border-t border-gray-100 flex justify-end">
+                        <button
+                            class="text-sm font-bold text-indigo-600 group-hover:text-indigo-700 flex items-center gap-1 transition-colors">
+                            View Attendance <svg class="w-4 h-4 ml-1" fill="none" stroke="currentColor"
+                                viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7">
+                                </path>
+                            </svg>
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </ng-container>
+
+        <!-- TEAM MEMBER DETAIL -->
+        <ng-container *ngIf="activeTab === 'team' && selectedMember">
+            <div class="mb-8 flex items-center justify-between">
+                <div class="flex items-center gap-6">
+                    <button
+                        class="p-2 border border-gray-300 rounded-lg hover:bg-gray-100 transition-colors shadow-sm bg-white"
+                        (click)="closeMember()">
+                        <svg class="w-5 h-5 text-gray-600" fill="none" stroke="currentColor" stroke-width="2"
+                            viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" d="M10 19l-7-7m0 0l7-7m-7 7h18"></path>
+                        </svg>
+                    </button>
+                    <div>
+                        <h1 class="text-3xl font-extrabold text-gray-900 flex items-center gap-3 tracking-tight">
+                            {{ selectedMember.fullName }}
+                        </h1>
+                        <p class="text-sm text-gray-500 font-medium">{{ selectedMember.email }}</p>
+                    </div>
+                </div>
+            </div>
+
+            <div *ngIf="teamLoading" class="flex justify-center py-16">
+                <span class="loading loading-spinner loading-lg text-indigo-600"></span>
+            </div>
+
+            <div *ngIf="!teamLoading" class="bg-white rounded-xl shadow-sm border border-gray-200 overflow-hidden">
+                <div class="p-6 border-b border-gray-100 bg-gray-50/50">
+                    <h3 class="font-bold text-gray-900 flex items-center tracking-tight">
+                        <svg class="w-5 h-5 mr-2 text-indigo-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"></path>
+                        </svg>
+                        Attendance History
+                    </h3>
+                </div>
+                <div class="overflow-x-auto">
+                    <table class="w-full text-left border-collapse">
+                        <thead class="bg-gray-50 border-b border-gray-200">
+                            <tr>
+                                <th class="px-6 py-4 font-bold text-xs tracking-wider uppercase text-gray-500">Date</th>
+                                <th class="px-6 py-4 font-bold text-xs tracking-wider uppercase text-gray-500">Check In
+                                </th>
+                                <th class="px-6 py-4 font-bold text-xs tracking-wider uppercase text-gray-500">Check Out
+                                </th>
+                                <th class="px-6 py-4 font-bold text-xs tracking-wider uppercase text-gray-500">Status
+                                </th>
+                                <th class="px-6 py-4 font-bold text-xs tracking-wider uppercase text-gray-500">Hours
+                                </th>
+                            </tr>
+                        </thead>
+                        <tbody class="text-sm divide-y divide-gray-100">
+                            <tr *ngFor="let a of memberAttendance" class="hover:bg-gray-50/50">
+                                <td class="px-6 py-4 font-bold text-gray-900">{{ a.date | date:'MMM d, y' }}</td>
+                                <td class="px-6 py-4 text-green-700 font-semibold">{{ ('1970-01-01T' + a.checkInTime) |
+                                    date:'shortTime' }}</td>
+                                <td class="px-6 py-4 font-medium"
+                                    [ngClass]="a.checkOutTime ? 'text-gray-900' : (isToday(a.date) ? 'text-orange-500' : 'text-red-500')">
+                                    {{ formatCheckOut(a) }}
+                                </td>
+                                <td class="px-6 py-4">
+                                    <span
+                                        class="px-3 py-1 rounded-lg border border-gray-200 text-xs font-bold tracking-wide bg-gray-50 text-gray-700">{{
+                                        a.status }}</span>
+                                </td>
+                                <td class="px-6 py-4 text-indigo-600 font-bold">{{ calcHours(a) }}</td>
+                            </tr>
+                            <tr *ngIf="memberAttendance.length === 0">
+                                <td colspan="5" class="px-6 py-16 text-center text-gray-400 font-medium">No records
+                                    found.</td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </ng-container>
+
+        <!-- MY ATTENDANCE TAB -->
+        <ng-container *ngIf="activeTab === 'checkin'">
+            <div class="mb-8">
+                <h1 class="text-3xl font-extrabold text-gray-900 tracking-tight">My Attendance</h1>
+                <p class="text-sm text-gray-500 mt-1 font-medium">Record your daily work hours directly</p>
+            </div>
+
+            <div class="bg-white rounded-xl shadow-sm border border-gray-200 p-10 max-w-xl">
+
+                <h3 class="font-bold text-gray-900 mb-8 pb-4 border-b border-gray-100 tracking-tight">Check-In Interface
+                </h3>
+
+                <div class="mb-8 text-center bg-gray-50/50 p-6 rounded-xl border border-gray-100">
+                    <div class="inline-flex items-center px-5 py-2.5 border rounded-full text-sm font-bold tracking-wide"
+                        [ngClass]="todayAttendance ? 'bg-green-50 border-green-200 text-green-700 shadow-[0_0_15px_rgba(34,197,94,0.1)]' : 'bg-white border-gray-200 text-gray-600'">
+                        <span class="w-3 h-3 rounded-full mr-2"
+                            [ngClass]="todayAttendance ? 'bg-green-500 animate-pulse' : 'bg-gray-400'"></span>
+                        {{ todayAttendance ? 'ACTIVE TERMINAL SESSION' : 'NOT CHECKED IN' }}
+                    </div>
+                </div>
+
+                <div class="flex gap-4">
+                    <button
+                        class="flex-1 py-4 rounded-xl font-bold text-base shadow-sm hover:shadow-md transition-all border flex items-center justify-center"
+                        [ngClass]="!attendanceLoading && !todayAttendance ? 'bg-indigo-600 border-indigo-600 text-white hover:-translate-y-0.5' : 'bg-gray-50 border-gray-200 text-gray-400 cursor-not-allowed'"
+                        (click)="checkIn()" [disabled]="attendanceLoading || !!todayAttendance">
+                        <span *ngIf="attendanceLoading" class="loading loading-spinner loading-sm mr-2"></span>
+                        Check In Terminal
+                    </button>
+
+                    <button
+                        class="flex-1 py-4 rounded-xl font-bold text-base shadow-sm hover:shadow-md transition-all border flex items-center justify-center"
+                        [ngClass]="!attendanceLoading && todayAttendance && !todayAttendance.checkOutTime ? 'bg-rose-600 border-rose-600 text-white hover:-translate-y-0.5' : 'bg-gray-50 border-gray-200 text-gray-400 cursor-not-allowed'"
+                        (click)="checkOut()"
+                        [disabled]="attendanceLoading || !todayAttendance || !!todayAttendance.checkOutTime">
+                        <span *ngIf="attendanceLoading" class="loading loading-spinner loading-sm mr-2"></span>
+                        Check Out Terminal
+                    </button>
+                </div>
+            </div>
+        </ng-container>
+
     </main>
 </div>

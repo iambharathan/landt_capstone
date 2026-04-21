@@ -3,9 +3,9 @@ spring:
     name: attendance-management
   
   datasource:
-    url: jdbc:mysql://localhost:3306/attendance_db?createDatabaseIfNotExist=true&useSSL=false&serverTimezone=UTC&allowPublicKeyRetrieval=true
-    username: root
-    password: 
+    url: jdbc:mysql://database-1.c9w4uoqc4q95.ap-south-1.rds.amazonaws.com:3306/attendance_db?createDatabaseIfNotExist=true&useSSL=false&serverTimezone=UTC&allowPublicKeyRetrieval=true
+    username: admin
+    password: bharathan
     driver-class-name: com.mysql.cj.jdbc.Driver
   
   jpa:

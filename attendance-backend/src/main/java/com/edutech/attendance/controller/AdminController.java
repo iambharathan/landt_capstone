@@ -1,9 +1,13 @@
 package com.edutech.attendance.controller;
 
+import com.edutech.attendance.dto.AttendanceDTO;
 import com.edutech.attendance.dto.PolicyDTO;
 import com.edutech.attendance.dto.UserDTO;
+import com.edutech.attendance.entity.LeaveRequest;
 import com.edutech.attendance.entity.Policy;
 import com.edutech.attendance.entity.User;
+import com.edutech.attendance.service.AttendanceService;
+import com.edutech.attendance.service.LeaveService;
 import com.edutech.attendance.service.PolicyService;
 import com.edutech.attendance.service.ReportService;
 import com.edutech.attendance.service.UserService;
@@ -21,29 +25,22 @@ import java.util.Map;
 @PreAuthorize("hasRole('ADMIN')")
 public class AdminController {
 
-    @Autowired
-    private UserService userService;
-
-    @Autowired
-    private PolicyService policyService;
-
-    @Autowired
-    private ReportService reportService;
-
-    // --- User Management ---
+    @Autowired private UserService userService;
+    @Autowired private PolicyService policyService;
+    @Autowired private ReportService reportService;
+    @Autowired private AttendanceService attendanceService;
+    @Autowired private LeaveService leaveService;
 
     @PostMapping("/users")
     public ResponseEntity<User> createUser(@RequestBody UserDTO userDTO) {
         return ResponseEntity.ok(userService.createUser(userDTO));
     }
 
-    // Fix #5: list all users
     @GetMapping("/users")
     public ResponseEntity<List<UserDTO>> getAllUsers() {
         return ResponseEntity.ok(userService.getAllUsers());
     }
 
-    // Fix #5: get user by ID
     @GetMapping("/users/{id}")
     public ResponseEntity<UserDTO> getUserById(@PathVariable Long id) {
         return ResponseEntity.ok(userService.getUserById(id));
@@ -65,7 +62,30 @@ public class AdminController {
         return ResponseEntity.ok("User deleted successfully");
     }
 
-    // --- Policy Management ---
+    /** Feature 5: Toggle user active/inactive (soft disable) */
+    @PutMapping("/users/{id}/toggle")
+    public ResponseEntity<User> toggleUser(@PathVariable Long id) {
+        return ResponseEntity.ok(userService.toggleUserActive(id));
+    }
+
+    /** Admin Employee Deep-Dive */
+    @GetMapping("/users/{userId}/attendance")
+    public ResponseEntity<List<AttendanceDTO>> getUserAttendance(@PathVariable Long userId) {
+        return ResponseEntity.ok(attendanceService.getAttendanceHistory(userId));
+    }
+
+    @GetMapping("/users/{userId}/leaves")
+    public ResponseEntity<List<LeaveRequest>> getUserLeaves(@PathVariable Long userId) {
+        return ResponseEntity.ok(leaveService.getAllLeavesForUser(userId));
+    }
+
+    @PutMapping("/leaves/{leaveId}/override")
+    public ResponseEntity<LeaveRequest> overrideLeave(
+            @PathVariable Long leaveId,
+            @RequestParam String status,
+            @RequestParam(required = false, defaultValue = "") String reason) {
+        return ResponseEntity.ok(leaveService.adminOverrideLeave(leaveId, status, reason));
+    }
 
     @PostMapping("/policies")
     public ResponseEntity<Policy> createPolicy(@RequestBody PolicyDTO policyDTO) {
@@ -73,8 +93,7 @@ public class AdminController {
     }
 
     @PutMapping("/policies/{id}")
-    public ResponseEntity<Policy> updatePolicy(@PathVariable Long id,
-                                                @RequestBody PolicyDTO policyDTO) {
+    public ResponseEntity<Policy> updatePolicy(@PathVariable Long id, @RequestBody PolicyDTO policyDTO) {
         return ResponseEntity.ok(policyService.updatePolicy(id, policyDTO));
     }
 
@@ -82,8 +101,6 @@ public class AdminController {
     public ResponseEntity<List<Policy>> getAllPolicies() {
         return ResponseEntity.ok(policyService.getAllPolicies());
     }
-
-    // --- Reports (Fix #2: real aggregation) ---
 
     @GetMapping("/reports/comprehensive")
     public ResponseEntity<Map<String, Object>> getComprehensiveReport() {
@@ -99,8 +116,6 @@ public class AdminController {
     public ResponseEntity<Map<String, Object>> getLeaveReport() {
         return ResponseEntity.ok(reportService.getLeaveSummary());
     }
-
-    // --- Health ---
 
     @GetMapping("/health")
     public ResponseEntity<String> health() {
