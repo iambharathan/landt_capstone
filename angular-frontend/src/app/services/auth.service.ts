@@ -50,3 +50,4 @@ export class AuthService {
         return this.getCurrentUser()?.role ?? '';
     }
 }
+console.log(environment.debug);
